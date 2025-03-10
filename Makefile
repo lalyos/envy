@@ -3,14 +3,19 @@ build: hterm
 	docker build -t progrium/envy .
 	docker tag progrium/envy progrium/envy:local
 
+DOMAIN ?= lalyo.sh
 dev:
 	docker build -t progrium/envy:dev -f Dockerfile .
+	docker rm -f envy.dev 2> /dev/null
 	docker run --rm --name envy.dev \
 		-v /tmp/envy:/envy \
 		-v /var/run/docker.sock:/var/run/docker.sock \
-		-p 8000:80 \
+		-p 80 \
 		-p 2222:22 \
 		-e HOST_ROOT=/tmp/envy \
+		--net traefik \
+		--label "traefik.frontend.rule=Host:envy.$(DOMAIN)" \
+		--label "traefik.port=80" \
 		progrium/envy:dev
 
 
