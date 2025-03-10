@@ -10,3 +10,5 @@ require (
 	golang.org/x/crypto v0.0.0-20181015023909-0c41d7ab0a0e // indirect
 	golang.org/x/net v0.0.0-20181023162649-9b4f9f5ad519 // indirect
 )
+
+replace github.com/progrium/envy => .
