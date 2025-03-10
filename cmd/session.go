@@ -100,12 +100,14 @@ func (s *Session) DockerName() string {
 
 func (s *Session) Enter(environ *Environ) int {
 	defer s.Cleanup()
-	log.Println(s.User.Name, "| entering session", s.Name)
+	log.Println(s.User.Name, "| entering session v1.1", s.Name)
 	os.Setenv("ENVY_USER", s.User.Name)
 	os.Setenv("ENVY_SESSION", s.Name)
 	s.SetEnviron(environ.Name)
 	fmt.Fprintln(os.Stdout, "Entering session...")
+	log.Println("[HACK] start session server with:", s.Path("run/envy.sock"))
 	envySock := startSessionServer(s.Path("run/envy.sock"))
+	log.Println("[HACK] session socket:", s.Path("run/envy.sock"))
 	defer envySock.Close()
 	for {
 		dockerRemove(s.Name)
@@ -136,6 +138,15 @@ func (s *Session) Enter(environ *Environ) int {
 		if dockerShellCmd(environ.DockerImage()) != nil {
 			args = append(args, dockerShellCmd(environ.DockerImage())...)
 		}
+
+		var anys []any
+
+		anys = append(anys, "[HACK] trying to run: /bin/docker")
+		for _, s := range args {
+			anys = append(anys, s)
+		}
+		log.Println(anys...)
+
 		status := run(exec.Command("/bin/docker", args...))
 		if status != 128 {
 			return status
@@ -182,9 +193,11 @@ func startSessionServer(path string) net.Listener {
 	assert(err)
 	go func() {
 		for {
+			log.Println("[HACK] session start Accept() ...")
 			conn, err := ln.Accept()
 			if err != nil {
 				break
+				log.Print("[HACK] ERROR:", err)
 			}
 			go handleSSHConn(conn)
 		}
@@ -193,6 +206,7 @@ func startSessionServer(path string) net.Listener {
 }
 
 func handleSSHConn(conn net.Conn) {
+	log.Println("[HACK] handleSSHConn ...")
 	defer conn.Close()
 	config := &ssh.ServerConfig{NoClientAuth: true}
 	privateBytes, err := ioutil.ReadFile(Envy.DataPath("id_host"))

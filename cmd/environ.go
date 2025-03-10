@@ -6,7 +6,7 @@ import (
 	"os"
 	"os/exec"
 
-	"github.com/fsouza/go-dockerclient"
+	docker "github.com/fsouza/go-dockerclient"
 	"github.com/spf13/cobra"
 )
 
@@ -80,7 +80,7 @@ func GetEnviron(user, name string) *Environ {
 	mkdirAll(e.Path("run"))
 	if !dockerRunning(e.DockerName()) {
 		dockerRemove(e.DockerName())
-		log.Println(user, "| starting dind for environ", e.Name)
+		log.Println(user, "| starting dind for environ:", e.Name, " dockerName:", e.DockerName())
 		dockerRunDetached(docker.CreateContainerOptions{
 			Name: e.DockerName(),
 			Config: &docker.Config{
