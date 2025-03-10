@@ -84,8 +84,9 @@ func GetEnviron(user, name string) *Environ {
 		dockerRunDetached(docker.CreateContainerOptions{
 			Name: e.DockerName(),
 			Config: &docker.Config{
-				Hostname: e.Name,
-				Image:    "progrium/dind:latest",
+				Hostname:   e.Name,
+				Image:      "docker:28.0-dind",
+				Entrypoint: []string{"dockerd"},
 			},
 			HostConfig: &docker.HostConfig{
 				Privileged:    true,

@@ -66,8 +66,8 @@ var cmdServe = &cobra.Command{
 		Envy.Setup()
 
 		go func() {
-			log.Println("Pulling progrium/dind:latest ...")
-			exec.Command("/bin/docker", "pull", "progrium/dind:latest").Run()
+			log.Println("Pulling docker:28.0-dind ...")
+			exec.Command("/bin/docker", "pull", "docker:28.0-dind").Run()
 		}()
 
 		log.Println("Starting HTTP server on 80 ...")
