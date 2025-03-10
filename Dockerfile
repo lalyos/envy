@@ -1,12 +1,11 @@
-FROM gliderlabs/alpine:3.8
+FROM alpine:3.21
 RUN apk --update add bash curl go git mercurial musl-dev
 
 RUN curl -Ls https://github.com/progrium/execd/releases/download/v0.1.0/execd_0.1.0_Linux_x86_64.tgz \
     | tar -zxC /bin \
   && curl -Ls https://github.com/progrium/entrykit/releases/download/v0.2.0/entrykit_0.2.0_Linux_x86_64.tgz \
     | tar -zxC /bin \
-  && curl -sL https://get.docker.com/builds/Linux/x86_64/docker-1.7.1 > /bin/docker \
-  && chmod +x /bin/docker \
+  && curl -sL  https://download.docker.com/linux/static/stable/x86_64/docker-28.0.0.tgz | tar -xzv docker/docker --strip-components 1 -C /bin \
   && entrykit --symlink
 
 ADD ./data /tmp/data
